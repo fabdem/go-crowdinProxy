@@ -1,24 +1,19 @@
 package crowdinproxy
 
 import (
-	//"encoding/json"
-	//"errors"
 	"fmt"
-	//"io"
 	"net/http"
-	//"os"
 	"time"
 	"net/url"
 	"github.com/medisafe/go-crowdin"
-
 	"github.com/mreiferson/go-httpclient"
 )
 
 
-// New - create new instances of Crowdin API making use of a PROXY.
+// New - create a new instance of crowdin  use of a PROXY.
 func New(token, project, proxy string) (*crowdin.Crowdin, error) {
 
-	proxyUrl, err := url.Parse("proxy")
+	proxyUrl, err := url.Parse(proxy)
 	if err != nil {
 		fmt.Println("Bad proxy URL", err)
 		return nil,err
@@ -26,6 +21,7 @@ func New(token, project, proxy string) (*crowdin.Crowdin, error) {
 
     api := crowdin.New(token, project)
 	
+	// Set proxy and timeouts
 	transport := &httpclient.Transport{
 		ConnectTimeout:   5 * time.Second,
 		ReadWriteTimeout: 40 * time.Second,
