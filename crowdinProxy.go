@@ -1,4 +1,4 @@
-package crowdin
+package crowdinproxy
 
 import (
 	//"encoding/json"
@@ -16,7 +16,7 @@ import (
 
 
 // New - create new instances of Crowdin API making use of a PROXY.
-func New_prxy(token, project string, proxy string) (*crowdin.Crowdin, error) {
+func New(token, project, proxy string) (*crowdin.Crowdin, error) {
 
 	proxyUrl, err := url.Parse("proxy")
 	if err != nil {
@@ -24,23 +24,19 @@ func New_prxy(token, project string, proxy string) (*crowdin.Crowdin, error) {
 		return nil,err
 	} 
 
+    api := crowdin.New(token, project)
+	
 	transport := &httpclient.Transport{
 		ConnectTimeout:   5 * time.Second,
 		ReadWriteTimeout: 40 * time.Second,
 		Proxy: http.ProxyURL(proxyUrl),
-		
 	}
-	defer transport.Close()
-
-	s := &crowdin.Crowdin{}
-	s.config.apiBaseURL = apiBaseURL
-	s.config.apiAccountBaseURL = apiAccountBaseURL
-	s.config.token = token
-	s.config.project = project
-	s.config.client = &http.Client{
+	
+	api.SetClient(&http.Client{
 		Transport: transport,
-	}
-	return s, nil
+	})
+	
+	return api, nil
 }
 
 
