@@ -9,6 +9,16 @@ import (
 	"github.com/mreiferson/go-httpclient"
 )
 
+// Default values for timeouts
+var connectionTOinSecs time.Duration = 5
+var readwriteTOinSecs time.Duration = 40
+
+// Set connection and read/write timeouts for the subsequent new connections 
+func SetTimeouts(cnctTOinSecs, rwTOinSecs int) {
+    connectionTOinSecs = time.Duration(cnctTOinSecs)
+    readwriteTOinSecs = time.Duration(rwTOinSecs)
+}
+
 
 // New - create a new instance of crowdin  use of a PROXY.
 func New(token, project, proxy string) (*crowdin.Crowdin, error) {
@@ -23,8 +33,8 @@ func New(token, project, proxy string) (*crowdin.Crowdin, error) {
 	
 	// Set proxy and timeouts
 	transport := &httpclient.Transport{
-		ConnectTimeout:   5 * time.Second,
-		ReadWriteTimeout: 40 * time.Second,
+		ConnectTimeout:   connectionTOinSecs * time.Second,
+		ReadWriteTimeout: readwriteTOinSecs * time.Second,
 		Proxy: http.ProxyURL(proxyUrl),
 	}
 	
@@ -34,5 +44,4 @@ func New(token, project, proxy string) (*crowdin.Crowdin, error) {
 	
 	return api, nil
 }
-
 
